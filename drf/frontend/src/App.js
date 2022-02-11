@@ -8,35 +8,35 @@ import MenuNavbar from './components/MenuNavbar.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends React.Component {
-   constructor(props) {
-       super(props)
-       this.state = {
-           'usersDRF': []
-       }
-   }
+    constructor(props) {
+        super(props)
+        this.state = {
+            'usersDRF': []
+        }
+    }
 
-   componentDidMount() {
-       axios.get('http://127.0.0.1:8000/api/users/')
-       .then(response => {
-           const usersDRF = response.data
-               this.setState(
-               {
-                   'usersDRF': usersDRF
-               }
-           );
-       }).catch(error => console.log(error))
-   }
+    componentDidMount() {
+        axios.get('http://127.0.0.1:8000/api/users/')
+            .then(response => {
+                const usersDRF = response.data
+                this.setState(
+                    {
+                        'usersDRF': usersDRF
+                    }
+                );
+            }).catch(error => console.log(error))
+    }
 
 
-   render () {
-       return (
-           <div>
-               <MenuNavbar />
-               <UserDRFList usersDRF={this.state.usersDRF} />
-               <Footer />
-           </div>
-       )
-   }
+    render() {
+        return (
+            <div>
+                <MenuNavbar/>
+                <UserDRFList usersDRF={this.state.usersDRF}/>
+                <Footer/>
+            </div>
+        )
+    }
 }
 
 export default App;

@@ -5,5 +5,5 @@ from .serializers import UserDRFModelSerializer
 
 
 class UserDRFModelViewSet(ModelViewSet):
-   queryset = UserDRF.objects.all()
-   serializer_class = UserDRFModelSerializer
+    queryset = UserDRF.objects.all()
+    serializer_class = UserDRFModelSerializer
