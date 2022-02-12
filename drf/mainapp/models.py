@@ -18,3 +18,5 @@ class TODO(models.Model):
     creater = models.ForeignKey(UserDRF, on_delete=models.SET_NULL, null=True)
     is_active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.name
