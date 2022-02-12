@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from authapp.views import UserDRFModelViewSet
+
+from authapp.views import UserDRFViewSet
 from mainapp.views import TODOModelViewSet, ProjectModelViewSet
 
 router = DefaultRouter()
-router.register('users', UserDRFModelViewSet)
-router.register('projects', ProjectModelViewSet)
-router.register('todo', TODOModelViewSet)
+router.register('users', UserDRFViewSet, basename='users')
+router.register('projects', ProjectModelViewSet, basename='projects')
+router.register('todo', TODOModelViewSet, basename='todo')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
