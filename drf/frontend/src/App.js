@@ -7,11 +7,11 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom';
 
-import UserDRFList from './components/Authapp.js'
+import UserDRFList from './components/Users.js'
 import ProjectList from "./components/Projects";
 import ToDoList from "./components/ToDos";
 import Footer from './components/Footer.js';
-import ProjectUser from "./components/ProjectUser";
+import ProjectUser from "./components/Project";
 
 
 const
