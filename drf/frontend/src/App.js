@@ -10,18 +10,10 @@ import {BrowserRouter, Link, Route, Routes} from 'react-router-dom';
 import UserDRFList from './components/Users.js'
 import ProjectList from "./components/Projects";
 import ToDoList from "./components/ToDos";
-import Footer from './components/Footer.js';
+import Footer from './components/includes/Footer.js';
 import ProjectUser from "./components/Project";
+import NotFound404 from "./components/includes/NotFound404";
 
-
-const
-    NotFound404 = ({location}) => {
-        return (
-            <div>
-                <h1>Page '{location.pathname}' Not Found 404</h1>
-            </div>
-        )
-    }
 
 class App extends React.Component {
     constructor(props) {
@@ -85,13 +77,13 @@ class App extends React.Component {
                     <Routes>
                         <Route path='/'/>
                         <Route path='/users' element={<UserDRFList usersDRF={this.state.usersDRF}/>}/>
-                        <Route path='/projects' element={<ProjectList projects={this.state.projects}/>}/>
-                        <Route path='/todos' element={<ToDoList todos={this.state.todos}/>}/>
 
+                        <Route path='/projects' element={<ProjectList projects={this.state.projects}/>}/>
                         <Route path="/projects/:id" element={<ProjectUser projects={this.state.projects}/>}/>
 
-                        <Route component={NotFound404}/>
+                        <Route path='/todos' element={<ToDoList todos={this.state.todos}/>}/>
 
+                        <Route path="*" element={<NotFound404/>}/>
                     </Routes>
                 </BrowserRouter>
                 <Footer/>
