@@ -57,3 +57,4 @@ class TestTODOModelViewSet(TestCase):
         todo = TODO.objects.get(id=todo.id)
 
         self.assertEqual(todo.creater, 'Руслан и Людмила')
+        self.client.logout()
