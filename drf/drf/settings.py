@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'corsheaders',
     'django_filters',
+    'drf_yasg',
 
     'authapp',
     'mainapp',
