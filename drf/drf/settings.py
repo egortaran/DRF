@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'corsheaders',
     'django_filters',
+    'drf_yasg',
 
     'authapp',
     'mainapp',
@@ -140,6 +141,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
 }
 
 CORS_ALLOWED_ORIGINS = [
