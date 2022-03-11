@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase
 from mixer.auto import mixer
 from rest_framework import status
@@ -45,16 +47,17 @@ class TestTODOModelViewSet(TestCase):
 
         todo = mixer.blend(TODO)
         response = self.client.put(f'/api/todo/{todo.id}/',
-                                   data={
+                                   data=json.dumps({
                                        'id': todo.id,
                                        'text': 'Руслан и Людмила',
                                        'is_active': True,
                                        'project': todo.project.id,
                                        'creater': admin.id
-                                   }, format='json')
+                                   }),
+                                   content_type="application/json", )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         todo = TODO.objects.get(id=todo.id)
 
-        self.assertEqual(todo.creater, 'Руслан и Людмила')
+        self.assertEqual(todo.text, 'Руслан и Людмила')
         self.client.logout()
