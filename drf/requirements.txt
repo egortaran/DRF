@@ -1,0 +1,6 @@
+Django
+djangorestframework
+django-rest-auth
+django-cors-headers
+django-filter
+drf-yasg
