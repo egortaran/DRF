@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'drf_yasg',
-    "graphene_django"
+    "graphene_django",
 
     'authapp',
     'mainapp',
@@ -156,3 +156,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
     'http://127.0.0.1:9000'
 ]
+
+GRAPHENE = {
+    "SCHEMA": "drf.schema.schema"
+}
