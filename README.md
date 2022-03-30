@@ -41,3 +41,5 @@ deleting a ToDo note, it changes its value to ```is_active = False```
 ## Tests
 
 In testing, we checked how it works with user authorization. As well as **GET**, **POST**, **PUT** requests.
+
+# Add GraphQL
