@@ -3,7 +3,24 @@ import React from 'react'
 class ProjectForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {name: '', repository: '', users: 0}
+        this.state = {name: '', repository: '', users: []}
+    }
+
+    handleUserChange(event) {
+        if (!event.target.selectedOptions) {
+            this.setState({
+                'users': []
+            })
+            return;
+        }
+
+        let users = []
+        for (let i = 0; i < event.target.selectedOptions.length; i++) {
+            users.push(event.target.selectedOptions.item(i).value)
+        }
+        this.setState({
+            'author': users
+        })
     }
 
     handleChange(event) {
@@ -33,11 +50,11 @@ class ProjectForm extends React.Component {
                     <input type="text" className="form-control" name="repository"
                            value={this.state.repository} onChange={(event) => this.handleChange(event)}/>
                 </div>
-                <div className="form-group">
-                    <label for="users">users</label>
-                    <input type="number" className="form-control" name="users"
-                           value={this.state.users} onChange={(event) => this.handleChange(event)}/>
-                </div>
+                <select name="users" multiple onChange={(event) => this.handleUserChange(event)}>
+                    {this.props.users.map((item) => <option value={item.id}> {item.first_name} </option>)}
+
+                </select>
+
                 <input type="submit" className="btn btn-primary" value="Save"/>
             </form>
         );
