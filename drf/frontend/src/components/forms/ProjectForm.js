@@ -19,7 +19,7 @@ class ProjectForm extends React.Component {
             users.push(event.target.selectedOptions.item(i).value)
         }
         this.setState({
-            'author': users
+            'users': users
         })
     }
 
@@ -51,7 +51,7 @@ class ProjectForm extends React.Component {
                            value={this.state.repository} onChange={(event) => this.handleChange(event)}/>
                 </div>
                 <select name="users" multiple onChange={(event) => this.handleUserChange(event)}>
-                    {this.props.users.map((item) => <option value={item.id}> {item.first_name} </option>)}
+                    {this.state.users.map((item) => <option value={item.id}> {item.first_name} </option>)}
 
                 </select>
 
