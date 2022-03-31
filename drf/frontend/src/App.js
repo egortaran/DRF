@@ -107,11 +107,28 @@ class App extends React.Component {
     createProject(name, author, users) {
         const headers = this.get_headers()
         const data = {name: name, author: author, users: users}
-        axios.post(`http://127.0.0.1:8000/api/projects/`, data, {headers, headers, headers})
-            .then(response => {
-                let new_project = response.data
+        axios.post(`http://127.0.0.1:8000/api/projects/`, data, {headers})
+            .then(
+                response => {
+                    this.load_data()
+                }
+            ).catch(error => {
+            console.log(error)
+            this.setState({projects: []})
+        })
 
-            }).catch(error => console.log(error))
+    }
+
+    deleteProjects(id) {
+        const headers = this.get_headers()
+        axios.delete(`http://127.0.0.1:8001/api/projects/${id}`, {headers}).then(
+            response => {
+                this.load_data()
+            }
+        ).catch(error => {
+            console.log(error)
+            this.setState({projects: []})
+        })
     }
 
 
@@ -147,7 +164,7 @@ class App extends React.Component {
                         <Route path='/projects' element={<ProjectList projects={this.state.projects}/>}/>
                         <Route path="/projects/:id" element={<ProjectUser projects={this.state.projects}/>}/>
                         <Route path='/projects/create' element={<ProjectForm
-                        createProject={(name, repository, users) => this.createProject(name, repository, users)}/>}/>
+                            createProject={(name, repository, users) => this.createProject(name, repository, users)}/>}/>
 
                         <Route path='/todos' element={<ToDoList todos={this.state.todos}/>}/>
 
