@@ -29,6 +29,10 @@ class ProjectForm extends React.Component {
                 [event.target.name]: event.target.value
             }
         );
+        console.log(event.target.name ,event.target.value)
+        console.log(this.state.name)
+        console.log(123123)
+        console.log(this.state.users)
     }
 
     handleSubmit(event) {
@@ -51,8 +55,6 @@ class ProjectForm extends React.Component {
                            value={this.state.repository} onChange={(event) => this.handleChange(event)}/>
                 </div>
                 <select name="users" multiple onChange={(event) => this.handleUserChange(event)}>
-                    {this.state.users.map((item) => <option value={item.id}> {item.first_name} </option>)}
-
                 </select>
 
                 <input type="submit" className="btn btn-primary" value="Save"/>
