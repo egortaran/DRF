@@ -15,6 +15,7 @@ import Footer from './components/includes/Footer.js';
 import ProjectUser from "./components/Project";
 import LoginForm from './components/Auth.js'
 import NotFound404 from "./components/includes/NotFound404";
+import ProjectForm from "./components/forms/ProjectForm";
 
 
 class App extends React.Component {
@@ -103,6 +104,33 @@ class App extends React.Component {
         this.get_token_from_storage()
     }
 
+    createProject(name, author, users) {
+        const headers = this.get_headers()
+        const data = {name: name, author: author, users: users}
+        axios.post(`http://127.0.0.1:8000/api/projects/`, data, {headers})
+            .then(
+                response => {
+                    this.load_data()
+                }
+            ).catch(error => {
+            console.log(error)
+            this.setState({projects: []})
+        })
+
+    }
+
+    deleteProjects(id) {
+        const headers = this.get_headers()
+        axios.delete(`http://127.0.0.1:8001/api/projects/${id}`, {headers}).then(
+            response => {
+                this.load_data()
+            }
+        ).catch(error => {
+            console.log(error)
+            this.setState({projects: []})
+        })
+    }
+
 
     render() {
         return (
@@ -135,6 +163,8 @@ class App extends React.Component {
 
                         <Route path='/projects' element={<ProjectList projects={this.state.projects}/>}/>
                         <Route path="/projects/:id" element={<ProjectUser projects={this.state.projects}/>}/>
+                        <Route path='/projects/create' element={<ProjectForm
+                            createProject={(name, repository, users) => this.createProject(name, repository, users)}/>}/>
 
                         <Route path='/todos' element={<ToDoList todos={this.state.todos}/>}/>
 

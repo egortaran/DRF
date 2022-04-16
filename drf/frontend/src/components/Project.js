@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import {Link, useParams} from 'react-router-dom'
 
 const ProjectItem = ({project}) => {
     console.log(project.users)
@@ -14,7 +14,7 @@ const ProjectItem = ({project}) => {
 
 
 const ProjectList = ({projects}) => {
-    let { id } = useParams();
+    let {id} = useParams();
     let filtered_items = projects.filter((project) => project.id == id)
     return (
         <table>

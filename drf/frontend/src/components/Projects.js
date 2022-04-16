@@ -17,16 +17,21 @@ const ProjectItem = ({project}) => {
 
 const ProjectList = ({projects}) => {
     return (
-        <table>
-            <tbody>
-            <th>id</th>
-            <th>name</th>
-            <th>repository</th>
-            <th>users</th>
+        <div>
+            <table>
+                <tbody>
+                <th>id</th>
+                <th>name</th>
+                <th>repository</th>
+                <th>users</th>
 
-            {projects.map((project) => <ProjectItem project={project}/>)}
-            </tbody>
-        </table>
+                {projects.map((project) => <ProjectItem project={project}/>)}
+                </tbody>
+            </table>
+            <br/>
+
+            <Link to='/projects/create'>Create</Link>
+        </div>
     )
 }
 
