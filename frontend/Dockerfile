@@ -1,4 +1,4 @@
-from nginx:1.19-alpine
+FROM nginx:latest
 
-COPY ./ build
+COPY ./build /var/www
 COPY nginx.conf /etc/nginx/nginx.conf
