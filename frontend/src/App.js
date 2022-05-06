@@ -1,227 +1,183 @@
-import React from 'react'
-import logo from './logo.svg'
-import './App.css'
-import UsersList from './components/UsersList.js'
-import NoteToDoList from './components/NoteToDoList.js'
-import ProjectsList from './components/ProjectsList.js'
-import ProjectInfo from './components/ProjectInfo.js'
-import LoginForm from './components/LoginForm.js'
-import ProjectForm from './components/ProjectForm.js'
-import NoteToDoForm from './components/NoteToDoForm.js'
-import SearchByProjectForm from './components/SearchByProject.js'
-import Menu from './components/Menu.js'
-import Info from './components/Info.js'
-import Footer from './components/Footer.js'
+import React from 'react';
+import './App.css';
 import axios from 'axios'
-import {BrowserRouter, Route, Routes, Link, useLocation, Navigate} from 'react-router-dom'
+import Cookies from 'universal-cookie';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import {BrowserRouter, Link, Route, Routes} from 'react-router-dom';
 
-
-const NotFound = () => {
-    let location = useLocation()
-    return (
-        <div> Page {location.pathname} not found </div>
-    )
-}
-
+import UserDRFList from './components/Users.js'
+import ProjectList from "./components/Projects";
+import ToDoList from "./components/ToDos";
+import Footer from './components/includes/Footer.js';
+import ProjectUser from "./components/Project";
+import LoginForm from './components/Auth.js'
+import NotFound404 from "./components/includes/NotFound404";
+import ProjectForm from "./components/forms/ProjectForm";
 
 
 class App extends React.Component {
-   constructor(props) {
-       super(props)
-       this.state = {
-           'users': [],
-           'projects': [],
-           'noteToDo': [],
-           'token': ''
-       }
-   }
+    constructor(props) {
+        super(props)
+        this.state = {
+            'usersDRF': [],
+            'projects': [],
+            'todos': [],
 
-   getData() {
-        let headers = this.getHeader()
-        axios
-            .get('http://127.0.0.1:8000/api/users/', {headers})
-            .then(response => {
-                const users = response.data
-                    console.log(users)
-                this.setState({
-                    'users': users
-                })
-            })
-            .catch(error => {
-                console.log(error)
-                this.setState({
-                    'users': []
-                })
-            })
-        axios
-            .get('http://127.0.0.1:8000/api/projects/', {headers})
-            .then(response => {
-                const projects = response.data.results
-                this.setState({
-                    'projects': projects
-                })
-            })
-            .catch(error => {
-                console.log(error)
-                this.setState({
-                    'projects': []
-                })
-            })
-        axios
-            .get('http://127.0.0.1:8000/api/notes/?is_active=True', {headers})
-            .then(response => {
-                const noteToDo = response.data.results
-
-                this.setState({
-                    'noteToDo': noteToDo
-                })
-            })
-             .catch(error => {
-                console.log(error)
-                this.setState({
-                    'noteToDo': []
-                })
-            })
-    }
-
-
-    componentDidMount() {
-        let token = localStorage.getItem('token')
-        this.setState({
-            'token': token
-        }, this.getData)
-    }
-
-    isAuth() {
-        return !!this.state.token
-    }
-
-    getHeader() {
-        if (this.isAuth()) {
-            return {
-                'Authorization': 'Token ' + this.state.token,
-                'Accept': 'application/json; version=2.0'
-            }
-        }
-        return {
-            'Accept': 'application/json; version=2.0'
+            'token': ''
         }
     }
 
-    getToken(login, password) {
-        console.log(login, password)
-        axios
-            .post('http://127.0.0.1:8000/api-auth-token/', {'username': login, 'password': password})
-            .then(response => {
-                const token = response.data.token
-                localStorage.setItem('token', token)
-                localStorage.setItem('username', login)
-                this.setState({
-                    'token': token,
-                }, this.getData)
-            })
-            .catch(error => console.log(error))
+    set_token(token) {
+        const cookies = new Cookies()
+        cookies.set('token', token)
+        this.setState({'token': token}, () => this.load_data())
+    }
+
+    get_token_from_storage() {
+        const cookies = new Cookies()
+        const token = cookies.get('token')
+        this.setState({'token': token}, () => this.load_data())
+    }
+
+    is_authenticated() {
+        return this.state.token != ''
     }
 
     logout() {
-        localStorage.setItem('token', '')
-        this.setState({
-            'token': '',
-        }, this.getData)
+        this.set_token('')
     }
 
-    getUserName(){
-        let firstName = this.state.users.find(el => el['username'] === localStorage.getItem('username'))
-        if ((firstName) && (firstName['first_name'])) {
-         return firstName['first_name']
+    get_token(username, password) {
+        axios.post('http://127.0.0.1:8000/api-token-auth/', {username: username, password: password})
+            .then(response => {
+                this.set_token(response.data['token'])
+            }).catch(error => alert('Неверный логин или пароль'))
+    }
+
+    get_headers() {
+        let headers = {
+            'Content-Type': 'application/json'
         }
-        if (firstName) {
-         return firstName['username']
+        if (this.is_authenticated()) {
+            headers['Authorization'] = 'Token ' + this.state.token
         }
-
+        return headers
     }
 
-    deleteNoteToDo(id) {
-        const headers = this.getHeader()
-        axios
-            .delete(`http://127.0.0.1:8000/api/notes/${id}`, {headers, headers})
+    load_data() {
+        const headers = this.get_headers()
+        axios.get('http://127.0.0.1:8000/api/users/', {headers})
             .then(response => {
-                this.setState({noteToDo: this.state.noteToDo.filter((item)=>item.id !==id)})})
-            .catch(error => console.log(error))
-    }
+                const usersDRF = response.data
+                this.setState(
+                    {
+                        'usersDRF': usersDRF
+                    }
+                );
+            }).catch(error => console.log(error))
 
-    deleteProject(id) {
-        const headers = this.getHeader()
-        axios
-            .delete(`http://127.0.0.1:8000/api/projects/${id}`, {headers, headers})
+        axios.get('http://127.0.0.1:8000/api/projects/', {headers})
             .then(response => {
-                this.setState({projects: this.state.projects.filter((item)=>item.id !==id)})})
-            .catch(error => console.log(error))
-    }
+                const project = response.data.results
+                this.setState(
+                    {
+                        'projects': project
+                    }
+                );
+            }).catch(error => console.log(error))
 
-   newProject(name, link_repository, users) {
-       let headers = this.getHeader()
-       axios
-            .post('http://127.0.0.1:8000/api/projects/', {'name': name, 'link_repository': link_repository, 'users': users }, {headers})
+        axios.get('http://127.0.0.1:8000/api/todo/', {headers})
             .then(response => {
-                this.getData()
-            })
-            .catch(error => {
-                console.log(error)
-       })
+                const todo = response.data.results
+                this.setState(
+                    {
+                        'todos': todo
+                    }
+                );
+            }).catch(error => console.log(error))
     }
 
-   newNoteToDo(project, text, user) {
-      let headers = this.getHeader()
-      axios
-            .post('http://127.0.0.1:8000/api/notes/', {'project': project, 'text': text, 'user': user }, {headers})
-            .then(response => {
-                this.getData()
-            })
-            .catch(error => {
-                console.log(error)
-      })
+    componentDidMount() {
+        this.get_token_from_storage()
     }
 
-    searchByProject(name) {
-      let headers = this.getHeader()
-      axios
-            .get(`http://127.0.0.1:8000/api/projects/?name=${name}`, {headers})
-            .then(response => {
-                console.log(response)
-            })
-            .catch(error => {
-                console.log(error)
-      })
+    createProject(name, author, users) {
+        const headers = this.get_headers()
+        const data = {name: name, author: author, users: users}
+        axios.post(`http://127.0.0.1:8000/api/projects/`, data, {headers})
+            .then(
+                response => {
+                    this.load_data()
+                }
+            ).catch(error => {
+            console.log(error)
+            this.setState({projects: []})
+        })
+
     }
 
-   render () {
-       return (
-            <div>
+    deleteProjects(id) {
+        const headers = this.get_headers()
+        axios.delete(`http://127.0.0.1:8001/api/projects/${id}`, {headers}).then(
+            response => {
+                this.load_data()
+            }
+        ).catch(error => {
+            console.log(error)
+            this.setState({projects: []})
+        })
+    }
+
+
+    render() {
+        return (
+            <div className="App">
                 <BrowserRouter>
-                    <li>
-                        { this.isAuth() ? <div> Привет, { this.getUserName() } </div> : <div> Привет </div> }
-                        { this.isAuth() ? <button onClick={()=>this.logout()}> Выход </button> : <button> <Link to='/login'> Вход </Link> </button>}
-                    </li>
-                    <Menu />
+                    <Navbar bg="light" expand="lg">
+                        <Container>
+                            <Navbar.Collapse id="basic-navbar-nav">
+                                <Nav className="me-auto">
+                                    <Nav.Link><Link to='/'>Home </Link></Nav.Link>
+                                    <Nav.Link><Link to='/users'>Users</Link></Nav.Link>
+                                    <Nav.Link><Link to='/projects'>Projects</Link></Nav.Link>
+                                    <Nav.Link><Link to='/todos'>ToDo</Link></Nav.Link>
+
+                                    <Nav.Link>
+                                        <li>
+                                            {this.is_authenticated() ?
+                                                <button onClick={() => this.logout()}>Logout</button> :
+                                                <Link to='/login'>Login</Link>}
+                                        </li>
+
+                                    </Nav.Link>
+                                </Nav>
+                            </Navbar.Collapse>
+                        </Container>
+                    </Navbar>
                     <Routes>
-                        <Route exact path='/' element = {<Info />} />
-                        <Route exact path='/users' element = {<UsersList users={this.state.users} />} />
-                        <Route exact path='/projects' element = {<ProjectsList projects={this.state.projects} deleteProject={(id) => this.deleteProject(id)}/>} />
-                        <Route exact path='/projects/create' element = {<ProjectForm users={this.state.users} newProject={(name, link_repository, users) => this.newProject(name, link_repository, users)}/>} />
-                        <Route exact path='/notes'  element = {<NoteToDoList noteToDoes={this.state.noteToDo} deleteNoteToDo={(id) => this.deleteNoteToDo(id)}/>} />
-                        <Route exact path='/notes/create' element = {<NoteToDoForm users={this.state.users} projects={this.state.projects} newNoteToDo={(project, text, user) => this.newNoteToDo(project, text, user)}/>} />
-                        <Route exact path='/search' element = {<SearchByProjectForm  getHeader={() => this.getHeader()} deleteProject={(id) => this.deleteProject(id)}/>} />
-                        <Route path='/project/:id' element = {<ProjectInfo projects={this.state.projects} />} />
-                        <Route exact path='/login' element = {<LoginForm getToken={(login, password) => this.getToken(login, password)} />} />
-                        <Route path="*" element = {<NotFound />} />
+                        <Route path='/'/>
+                        <Route path='/users' element={<UserDRFList usersDRF={this.state.usersDRF}/>}/>
+
+                        <Route path='/projects' element={<ProjectList projects={this.state.projects}/>}/>
+                        <Route path="/projects/:id" element={<ProjectUser projects={this.state.projects}/>}/>
+                        <Route path='/projects/create' element={<ProjectForm
+                            createProject={(name, repository, users) => this.createProject(name, repository, users)}/>}/>
+
+                        <Route path='/todos' element={<ToDoList todos={this.state.todos}/>}/>
+
+                        <Route path='/login' element={<LoginForm
+                            get_token={(username, password) => this.get_token(username, password)}/>}/>
+
+                        <Route path="*" element={<NotFound404/>}/>
                     </Routes>
-                  <Footer />
                 </BrowserRouter>
+                <Footer/>
             </div>
-       )
-   }
+        )
+    }
 }
 
 export default App;
-
